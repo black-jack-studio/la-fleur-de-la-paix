@@ -1,4 +1,4 @@
-import { RoseMark } from "./RoseMark";
+import Image from "next/image";
 
 export function Maison() {
   return (
@@ -28,13 +28,20 @@ export function Maison() {
             </p>
           </div>
 
-          <div className="relative flex aspect-[4/5] items-center justify-center overflow-hidden rounded-[2rem] bg-gradient-to-b from-rose-wash to-paper-deep">
-            <RoseMark className="h-2/3 w-2/3 text-carmine" strokeWidth={0.85} />
-            <div className="absolute inset-x-0 bottom-0 p-8">
-              <p className="font-display text-3xl leading-none text-carmine sm:text-4xl">
+          <div className="relative flex aspect-[4/5] items-center justify-center overflow-hidden rounded-[2rem]">
+            <Image
+              src="/atelier-boutique.webp"
+              alt="Intérieur de l'atelier, présentoirs de fleurs fraîches et comptoir en bois"
+              fill
+              sizes="(min-width: 1024px) 40vw, 90vw"
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent p-8 pt-20">
+              <p className="font-display text-3xl leading-none text-white sm:text-4xl">
                 Rosa &laquo;&nbsp;La Paix&nbsp;&raquo;
               </p>
-              <p className="mt-2 text-[0.78rem] uppercase tracking-[0.1em] text-ink-soft">
+              <p className="mt-2 text-[0.78rem] uppercase tracking-[0.1em] text-white/80">
                 dite &laquo;&nbsp;Madame A. Meilland&nbsp;&raquo; · Antibes, 1945
               </p>
             </div>
