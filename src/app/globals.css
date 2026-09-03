@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #fdfcfa;
+  --paper-deep: #f6f2ee;
+  --hairline: #e8e0da;
+  --ink: #241c1d;
+  --ink-soft: #6b5c58;
+  --ink-faint: #a3948e;
+  --carmine: #9c2b3f;
+  --carmine-deep: #7c2032;
+  --carmine-soft: #c96c7c;
+  --rose-wash: #f6e6e6;
+  --rose-wash-deep: #eccdd0;
+
+  --font-display: var(--font-script);
+  --font-copy: var(--font-body);
+  --font-label: var(--font-body);
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-hairline: var(--hairline);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-carmine: var(--carmine);
+  --color-carmine-deep: var(--carmine-deep);
+  --color-carmine-soft: var(--carmine-soft);
+  --color-rose-wash: var(--rose-wash);
+  --color-rose-wash-deep: var(--rose-wash-deep);
+  --font-display: var(--font-script);
+  --font-copy: var(--font-body);
+  --font-label: var(--font-body);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-copy), Georgia, serif;
+  font-feature-settings: "onum" 1;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--carmine);
+  color: var(--paper);
+}
+
+* {
+  scrollbar-color: var(--ink-faint) var(--paper-deep);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--paper-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ink-faint);
+  border: 3px solid var(--paper-deep);
+  border-radius: 999px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--carmine);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes entry-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.entry-in {
+  animation: entry-in 0.45s cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+@keyframes rose-drift {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1.5deg);
+  }
+}
+
+.rose-drift {
+  animation: rose-drift 12s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .entry-in,
+  .rose-drift {
+    animation: none;
+  }
+}
