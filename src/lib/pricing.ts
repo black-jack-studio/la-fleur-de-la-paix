@@ -95,3 +95,22 @@ export function formatEUR(value: number): string {
     maximumFractionDigits: 0,
   }).format(value);
 }
+
+/**
+ * Plain-text rendering of the full price grid — fed to the chatbot so it can
+ * quote figures and reference the exact `key` / `size` values its tools expect.
+ */
+export function catalogueForPrompt(): string {
+  const sizeLine = SIZES.map(
+    (s) => `"${s.key}" = ${s.label} (${s.note})`
+  ).join(" · ");
+
+  const rows = COMPOSITION_TYPES.map((t) => {
+    const prices = SIZES.map(
+      (s) => `${s.label} ${formatEUR(t.prices[s.key])}`
+    ).join(", ");
+    return `- ${t.label} [key: ${t.key}] — ${t.description} Tarifs ${t.unit} : ${prices}.`;
+  }).join("\n");
+
+  return `Formats disponibles : ${sizeLine}.\n\nCompositions :\n${rows}`;
+}

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Pinyon_Script, Spectral } from "next/font/google";
 import "./globals.css";
+import { QuoteProvider } from "@/lib/quote-store";
+import { ChatWidget } from "@/components/ChatWidget";
 
 const pinyon = Pinyon_Script({
   variable: "--font-script",
@@ -24,7 +26,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr" className={`${pinyon.variable} ${spectral.variable}`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <QuoteProvider>
+          {children}
+          <ChatWidget />
+        </QuoteProvider>
+      </body>
     </html>
   );
 }
