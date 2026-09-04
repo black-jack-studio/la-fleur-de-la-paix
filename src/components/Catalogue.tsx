@@ -1,4 +1,14 @@
-import { COMPOSITION_TYPES, SIZES, formatEUR } from "@/lib/pricing";
+import Image from "next/image";
+import { COMPOSITION_TYPES, formatEUR } from "@/lib/pricing";
+
+const IMAGES: Record<string, string> = {
+  "bouquet-mariee": "/bouquet-mariee.png",
+  "bouquet-temoin": "/gallery/bouquet-temoin.jpg",
+  "centre-table": "/gallery/centre-table.jpg",
+  "arche-ceremonie": "/gallery/arche-ceremonie.jpg",
+  boutonniere: "/gallery/boutonniere.jpg",
+  "composition-accueil": "/gallery/composition-accueil.jpg",
+};
 
 export function Catalogue() {
   return (
@@ -15,45 +25,27 @@ export function Catalogue() {
           prix indiqué est celui qui alimente votre devis ci-dessous.
         </p>
 
-        <div className="mt-12 overflow-hidden rounded-3xl border border-hairline bg-paper">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] border-collapse text-sm">
-              <thead>
-                <tr className="border-b border-hairline bg-paper-deep/50 text-left text-[0.72rem] uppercase tracking-[0.1em] text-ink-faint">
-                  <th className="py-4 pl-7 pr-4 font-medium">Composition</th>
-                  {SIZES.map((s) => (
-                    <th key={s.key} className="py-4 px-4 text-right font-medium">
-                      {s.label}
-                    </th>
-                  ))}
-                  <th className="py-4 pl-4 pr-7 text-right font-medium">Unité</th>
-                </tr>
-              </thead>
-              <tbody>
-                {COMPOSITION_TYPES.map((type) => (
-                  <tr
-                    key={type.key}
-                    className="border-b border-hairline/70 align-top transition-colors last:border-0 hover:bg-rose-wash/30"
-                  >
-                    <td className="py-5 pl-7 pr-4">
-                      <p className="text-base text-ink">{type.label}</p>
-                      <p className="mt-0.5 text-[0.78rem] italic text-ink-faint">
-                        {type.latin}
-                      </p>
-                    </td>
-                    {SIZES.map((s) => (
-                      <td key={s.key} className="tabular py-5 px-4 text-right text-ink">
-                        {formatEUR(type.prices[s.key])}
-                      </td>
-                    ))}
-                    <td className="py-5 pl-4 pr-7 text-right text-[0.75rem] text-ink-faint">
-                      {type.unit}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-3">
+          {COMPOSITION_TYPES.map((type) => (
+            <div key={type.key} className="group">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-paper">
+                <Image
+                  src={IMAGES[type.key]}
+                  alt={type.label}
+                  fill
+                  sizes="(min-width: 640px) 33vw, 50vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+              <p className="mt-3 text-[0.98rem] text-ink">{type.label}</p>
+              <p className="mt-0.5 text-[0.85rem] text-ink-soft">
+                À partir de{" "}
+                <span className="font-medium text-carmine">
+                  {formatEUR(type.prices.s)}
+                </span>
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

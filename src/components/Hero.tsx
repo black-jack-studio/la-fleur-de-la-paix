@@ -35,14 +35,15 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="relative mx-auto flex w-full max-w-xl items-center justify-center lg:max-w-none">
+        <div className="relative mx-auto flex w-full max-w-lg items-center justify-center lg:max-w-none">
+          <div className="absolute inset-[6%] rounded-[3rem] bg-rose-wash" />
           <Image
             src="/bouquet-mariee.png"
             alt="Bouquet de mariée en roses rouges et blanches, gypsophile, ruban de soie"
-            width={667}
-            height={1000}
+            width={605}
+            height={679}
             priority
-            className="relative h-auto w-full object-contain drop-shadow-[0_28px_40px_rgba(37,20,22,0.22)]"
+            className="relative h-auto w-[85%] object-contain drop-shadow-[0_28px_40px_rgba(37,20,22,0.22)]"
           />
         </div>
       </div>
