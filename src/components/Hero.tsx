@@ -35,14 +35,14 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="relative mx-auto aspect-[4/5] w-full max-w-lg overflow-hidden rounded-[2rem] lg:max-w-none">
+        <div className="relative mx-auto flex w-full max-w-lg items-center justify-center lg:max-w-none">
           <Image
-            src="/bouquet-mariee.jpg"
-            alt="Bouquet de roses rouges, composition serrée sur bois brut"
-            fill
+            src="/hero-rose.jpg"
+            alt="Rose corail en gros plan, fond clair épuré"
+            width={1063}
+            height={1592}
             priority
-            sizes="(min-width: 1024px) 45vw, 90vw"
-            className="object-cover"
+            className="h-auto w-[70%] object-contain"
           />
         </div>
       </div>
