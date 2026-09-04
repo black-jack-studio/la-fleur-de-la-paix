@@ -126,7 +126,7 @@ export function ChatWidget() {
           {/* Header */}
           <div className="flex items-center gap-3 border-b border-hairline px-5 py-4">
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-rose-wash text-carmine">
-              <RoseMark className="h-5 w-5" strokeWidth={1.3} />
+              <RoseMark className="h-6 w-6" strokeWidth={1.3} />
             </span>
             <span className="flex flex-col">
               <span className="text-[0.9rem] font-medium text-ink">
@@ -258,7 +258,7 @@ export function ChatWidget() {
             />
           </svg>
         ) : (
-          <RoseMark className="h-7 w-7" strokeWidth={1.2} />
+          <RoseMark className="h-9 w-9" strokeWidth={1.2} />
         )}
       </button>
     </div>

@@ -2,7 +2,7 @@ import Image from "next/image";
 import { COMPOSITION_TYPES, formatEUR } from "@/lib/pricing";
 
 const IMAGES: Record<string, string> = {
-  "bouquet-mariee": "/bouquet-mariee.png",
+  "bouquet-mariee": "/bouquet-mariee.jpg",
   "bouquet-temoin": "/gallery/bouquet-temoin.jpg",
   "centre-table": "/gallery/centre-table.jpg",
   "arche-ceremonie": "/gallery/arche-ceremonie.jpg",

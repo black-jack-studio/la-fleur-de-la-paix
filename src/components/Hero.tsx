@@ -35,15 +35,14 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="relative mx-auto flex w-full max-w-lg items-center justify-center lg:max-w-none">
-          <div className="absolute inset-[6%] rounded-[3rem] bg-rose-wash" />
+        <div className="relative mx-auto aspect-[4/5] w-full max-w-lg overflow-hidden rounded-[2rem] lg:max-w-none">
           <Image
-            src="/bouquet-mariee.png"
-            alt="Bouquet de mariée en roses rouges et blanches, gypsophile, ruban de soie"
-            width={605}
-            height={679}
+            src="/bouquet-mariee.jpg"
+            alt="Bouquet de roses rouges, composition serrée sur bois brut"
+            fill
             priority
-            className="relative h-auto w-[85%] object-contain drop-shadow-[0_28px_40px_rgba(37,20,22,0.22)]"
+            sizes="(min-width: 1024px) 45vw, 90vw"
+            className="object-cover"
           />
         </div>
       </div>
