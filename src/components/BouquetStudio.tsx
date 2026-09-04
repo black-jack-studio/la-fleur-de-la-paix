@@ -63,7 +63,7 @@ export function BouquetStudio() {
   }
 
   return (
-    <section id="atelier-visuel" className="py-24 sm:py-32">
+    <section id="atelier-visuel" className="py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-6 sm:px-8">
         <p className="text-[0.8rem] font-medium uppercase tracking-[0.24em] text-carmine">
           L&apos;atelier en images
@@ -77,7 +77,7 @@ export function BouquetStudio() {
           d&apos;échanger avec nous.
         </p>
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+        <div className="mt-12 grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           {/* Controls */}
           <div className="rounded-3xl border border-hairline bg-paper-deep/40 p-6 sm:p-8">
             <p className="text-[0.72rem] font-medium uppercase tracking-[0.14em] text-ink-faint">
@@ -158,7 +158,7 @@ export function BouquetStudio() {
           </div>
 
           {/* Preview */}
-          <div className="rounded-3xl border border-hairline bg-paper p-6 shadow-[0_1px_2px_rgba(37,20,22,0.04),0_24px_48px_-32px_rgba(37,20,22,0.25)] sm:p-8">
+          <div className="rounded-3xl border border-hairline bg-paper p-6 shadow-[0_1px_2px_rgba(37,20,22,0.04),0_24px_48px_-32px_rgba(37,20,22,0.25)] sm:p-8 lg:sticky lg:top-24 lg:self-start">
             <div className="text-[0.72rem] font-medium uppercase tracking-[0.14em] text-ink-faint">
               Aperçu
             </div>
