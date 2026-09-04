@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export function Maison() {
   return (
-    <section id="maison" className="py-24 sm:py-32">
+    <section id="maison" className="py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-6 sm:px-8">
         <div className="grid gap-16 lg:grid-cols-[1fr_0.9fr] lg:items-center">
           <div>

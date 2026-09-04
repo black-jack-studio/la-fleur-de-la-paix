@@ -2,7 +2,7 @@ import { COMPOSITION_TYPES, SIZES, formatEUR } from "@/lib/pricing";
 
 export function Catalogue() {
   return (
-    <section id="compositions" className="bg-paper-deep/60 py-24 sm:py-32">
+    <section id="compositions" className="bg-paper-deep/60 py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-6 sm:px-8">
         <p className="text-[0.8rem] font-medium uppercase tracking-[0.24em] text-carmine">
           Le tarif de l&apos;atelier
