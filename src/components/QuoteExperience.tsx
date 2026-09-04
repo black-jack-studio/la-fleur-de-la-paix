@@ -1,26 +1,19 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import {
   COMPOSITION_TYPES,
   SIZES,
   formatEUR,
   lineTotal,
-  registerTotal,
   unitPrice,
-  type LedgerEntry,
   type SizeKey,
 } from "@/lib/pricing";
+import { useQuote } from "@/lib/quote-store";
 import { Button } from "./Button";
 
-function newId() {
-  return typeof crypto !== "undefined" && "randomUUID" in crypto
-    ? crypto.randomUUID()
-    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
-
 export function QuoteExperience() {
-  const [entries, setEntries] = useState<LedgerEntry[]>([]);
+  const { entries, total, addComposition, removeEntry } = useQuote();
   const [typeKey, setTypeKey] = useState(COMPOSITION_TYPES[0].key);
   const [size, setSize] = useState<SizeKey>("m");
   const [quantity, setQuantity] = useState(1);
@@ -35,15 +28,10 @@ export function QuoteExperience() {
 
   const selectedType = COMPOSITION_TYPES.find((t) => t.key === typeKey)!;
   const currentUnitPrice = unitPrice(typeKey, size);
-  const total = useMemo(() => registerTotal(entries), [entries]);
 
   function addEntry() {
-    setEntries((prev) => [...prev, { id: newId(), typeKey, size, quantity }]);
+    addComposition(typeKey, size, quantity);
     setQuantity(1);
-  }
-
-  function removeEntry(id: string) {
-    setEntries((prev) => prev.filter((e) => e.id !== id));
   }
 
   function summaryText() {

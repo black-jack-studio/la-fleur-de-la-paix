@@ -3,6 +3,7 @@ import { Button } from "./Button";
 const LINKS = [
   { href: "#maison", label: "La maison" },
   { href: "#compositions", label: "Compositions" },
+  { href: "#atelier-visuel", label: "Imaginer" },
   { href: "#devis", label: "Mon devis" },
   { href: "#contact", label: "Contact" },
 ];
