@@ -3,7 +3,7 @@ import { Button } from "./Button";
 
 export function Hero() {
   return (
-    <section id="top" className="relative overflow-hidden pt-16 pb-16 sm:pt-20 sm:pb-20">
+    <section id="top" className="relative overflow-hidden pt-8 pb-16 sm:pt-10 sm:pb-20">
       <div className="relative mx-auto grid max-w-6xl gap-16 px-6 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div>
           <p className="text-[0.8rem] font-medium uppercase tracking-[0.24em] text-carmine">
