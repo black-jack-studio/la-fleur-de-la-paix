@@ -14,8 +14,8 @@ import { Button } from "./Button";
 
 export function QuoteExperience() {
   const { entries, total, addComposition, removeEntry } = useQuote();
-  const [typeKey, setTypeKey] = useState(COMPOSITION_TYPES[0].key);
-  const [size, setSize] = useState<SizeKey>("m");
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [size, setSize] = useState<SizeKey | null>(null);
   const [quantity, setQuantity] = useState(1);
 
   const [name, setName] = useState("");
@@ -26,11 +26,35 @@ export function QuoteExperience() {
   const [submitted, setSubmitted] = useState(false);
   const [reference, setReference] = useState("");
 
-  const selectedType = COMPOSITION_TYPES.find((t) => t.key === typeKey)!;
-  const currentUnitPrice = unitPrice(typeKey, size);
+  const canAdd = selectedTypes.length > 0 && size !== null;
+  const previewTotal = size
+    ? selectedTypes.reduce(
+        (sum, key) => sum + unitPrice(key, size) * quantity,
+        0
+      )
+    : 0;
+
+  function toggleType(key: string) {
+    setSelectedTypes((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+    );
+  }
+
+  function toggleAllTypes() {
+    setSelectedTypes((prev) =>
+      prev.length === COMPOSITION_TYPES.length
+        ? []
+        : COMPOSITION_TYPES.map((t) => t.key)
+    );
+  }
 
   function addEntry() {
-    addComposition(typeKey, size, quantity);
+    if (!canAdd || !size) return;
+    for (const key of selectedTypes) {
+      addComposition(key, size, quantity);
+    }
+    setSelectedTypes([]);
+    setSize(null);
     setQuantity(1);
   }
 
@@ -73,9 +97,20 @@ export function QuoteExperience() {
           <div className="mt-12 grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
             {/* Entry form */}
             <div className="rounded-3xl border border-hairline bg-paper-deep/40 p-6 sm:p-8">
-              <p className="text-[0.72rem] font-medium uppercase tracking-[0.14em] text-ink-faint">
-                1 — Choisir la composition
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-[0.72rem] font-medium uppercase tracking-[0.14em] text-ink-faint">
+                  1 — Choisir la ou les compositions
+                </p>
+                <button
+                  type="button"
+                  onClick={toggleAllTypes}
+                  className="text-[0.72rem] font-medium text-carmine transition-colors hover:text-carmine-deep"
+                >
+                  {selectedTypes.length === COMPOSITION_TYPES.length
+                    ? "Tout désélectionner"
+                    : "Tout sélectionner"}
+                </button>
+              </div>
               <div className="mt-3 flex flex-col divide-y divide-hairline">
                 {COMPOSITION_TYPES.map((type) => (
                   <label
@@ -83,11 +118,10 @@ export function QuoteExperience() {
                     className="flex cursor-pointer items-start gap-3 py-3"
                   >
                     <input
-                      type="radio"
-                      name="composition-type"
+                      type="checkbox"
                       value={type.key}
-                      checked={typeKey === type.key}
-                      onChange={() => setTypeKey(type.key)}
+                      checked={selectedTypes.includes(type.key)}
+                      onChange={() => toggleType(type.key)}
                       className="mt-1.5 h-3.5 w-3.5 accent-[var(--carmine)]"
                     />
                     <span>
@@ -153,19 +187,32 @@ export function QuoteExperience() {
                     +
                   </button>
                 </div>
-                <p className="tabular text-sm text-ink-soft">
-                  {formatEUR(currentUnitPrice)} × {quantity} ={" "}
-                  <span className="font-medium text-ink">
-                    {formatEUR(currentUnitPrice * quantity)}
-                  </span>
-                </p>
+                {size && (
+                  <p className="tabular text-sm text-ink-soft">
+                    × {quantity} ={" "}
+                    <span className="font-medium text-ink">
+                      {formatEUR(previewTotal)}
+                    </span>
+                  </p>
+                )}
               </div>
 
-              <Button type="button" onClick={addEntry} className="mt-8 w-full">
+              <Button
+                type="button"
+                onClick={addEntry}
+                disabled={!canAdd}
+                className="mt-8 w-full"
+              >
                 Ajouter au devis
               </Button>
               <p className="mt-2.5 text-center text-[0.75rem] text-ink-faint">
-                « {selectedType.label} » sera ajouté à votre sélection.
+                {selectedTypes.length === 0
+                  ? "Sélectionnez au moins une composition."
+                  : !size
+                    ? "Choisissez un format pour continuer."
+                    : `${selectedTypes.length} composition${
+                        selectedTypes.length > 1 ? "s" : ""
+                      } seront ajoutées à votre sélection.`}
               </p>
             </div>
 
