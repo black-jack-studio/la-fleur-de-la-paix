@@ -82,7 +82,7 @@ export function QuoteExperience() {
             Composez, le total s&apos;actualise
           </h2>
 
-          <div className="mt-12 grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+          <div className="mt-12 grid gap-8 lg:grid-cols-[0.95fr_1.05fr]">
             {/* Entry form */}
             <div className="rounded-3xl border border-hairline bg-paper-deep/40 p-6 sm:p-8">
               <p className="text-[0.72rem] font-medium uppercase tracking-[0.14em] text-ink-faint">
@@ -182,7 +182,7 @@ export function QuoteExperience() {
             </div>
 
             {/* Selection summary */}
-            <div className="rounded-3xl border border-hairline bg-paper p-6 shadow-[0_1px_2px_rgba(37,20,22,0.04),0_24px_48px_-32px_rgba(37,20,22,0.25)] sm:p-8">
+            <div className="rounded-3xl border border-hairline bg-paper p-6 shadow-[0_1px_2px_rgba(37,20,22,0.04),0_24px_48px_-32px_rgba(37,20,22,0.25)] sm:p-8 lg:sticky lg:top-24 lg:self-start">
               <div className="flex items-center justify-between text-[0.72rem] font-medium uppercase tracking-[0.14em] text-ink-faint">
                 <span>Votre sélection</span>
                 <span>{entries.length} élément{entries.length > 1 ? "s" : ""}</span>
