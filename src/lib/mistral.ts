@@ -43,9 +43,15 @@ async function call(path: string, body: unknown): Promise<unknown> {
 
   if (!res.ok) {
     const detail = await res.text().catch(() => "");
+    if (res.status === 429) {
+      throw new MistralError(
+        "La limite d’utilisation de l’API Mistral est atteinte. Attendez quelques instants ou vérifiez le quota et la facturation de votre clé API.",
+        429
+      );
+    }
     throw new MistralError(
       `Mistral a répondu ${res.status}. ${detail.slice(0, 300)}`.trim(),
-      res.status === 429 ? 429 : 502
+      502
     );
   }
   return res.json();
