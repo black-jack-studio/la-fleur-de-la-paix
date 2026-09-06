@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <circle cx="128" cy="128" r="128" fill="#9c2b3f" />
+  <g transform="translate(128,132) scale(1.32)" fill="#fdfcfa" stroke="#fdfcfa" stroke-width="1.5" stroke-linejoin="round">
+    <path d="M2,60 C -6,84 2,104 -2,124" fill="none" stroke-width="4" stroke-linecap="round" opacity="0.9" />
+
+    <path d="M0,0 C -26,-14 -30,-48 -8,-72 C 0,-80 10,-76 8,-64 C 26,-52 30,-20 0,0 Z" transform="rotate(0)" opacity="0.96" />
+    <path d="M0,0 C -26,-14 -30,-48 -8,-72 C 0,-80 10,-76 8,-64 C 26,-52 30,-20 0,0 Z" transform="rotate(51.4285714286)" opacity="0.96" />
+    <path d="M0,0 C -26,-14 -30,-48 -8,-72 C 0,-80 10,-76 8,-64 C 26,-52 30,-20 0,0 Z" transform="rotate(102.8571428571)" opacity="0.96" />
+    <path d="M0,0 C -26,-14 -30,-48 -8,-72 C 0,-80 10,-76 8,-64 C 26,-52 30,-20 0,0 Z" transform="rotate(154.2857142857)" opacity="0.96" />
+    <path d="M0,0 C -26,-14 -30,-48 -8,-72 C 0,-80 10,-76 8,-64 C 26,-52 30,-20 0,0 Z" transform="rotate(205.7142857143)" opacity="0.96" />
+    <path d="M0,0 C -26,-14 -30,-48 -8,-72 C 0,-80 10,-76 8,-64 C 26,-52 30,-20 0,0 Z" transform="rotate(257.1428571429)" opacity="0.96" />
+    <path d="M0,0 C -26,-14 -30,-48 -8,-72 C 0,-80 10,-76 8,-64 C 26,-52 30,-20 0,0 Z" transform="rotate(308.5714285714)" opacity="0.96" />
+
+    <path d="M0,0 C -14,-8 -17,-28 -4,-42 C 0,-46 6,-44 5,-37 C 15,-30 17,-11 0,0 Z" transform="rotate(10) scale(0.78)" fill="#9c2b3f" fill-opacity="0.16" />
+    <path d="M0,0 C -14,-8 -17,-28 -4,-42 C 0,-46 6,-44 5,-37 C 15,-30 17,-11 0,0 Z" transform="rotate(82) scale(0.78)" fill="#9c2b3f" fill-opacity="0.16" />
+    <path d="M0,0 C -14,-8 -17,-28 -4,-42 C 0,-46 6,-44 5,-37 C 15,-30 17,-11 0,0 Z" transform="rotate(154) scale(0.78)" fill="#9c2b3f" fill-opacity="0.16" />
+    <path d="M0,0 C -14,-8 -17,-28 -4,-42 C 0,-46 6,-44 5,-37 C 15,-30 17,-11 0,0 Z" transform="rotate(226) scale(0.78)" fill="#9c2b3f" fill-opacity="0.16" />
+    <path d="M0,0 C -14,-8 -17,-28 -4,-42 C 0,-46 6,-44 5,-37 C 15,-30 17,-11 0,0 Z" transform="rotate(298) scale(0.78)" fill="#9c2b3f" fill-opacity="0.16" />
+
+    <circle cx="0" cy="0" r="7" fill="#9c2b3f" />
+  </g>
+</svg>

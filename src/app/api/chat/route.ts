@@ -6,59 +6,51 @@ import {
   type SizeKey,
 } from "@/lib/pricing";
 import {
-  chatCompletion,
-  MistralError,
-  type ChatMessage,
-  type ToolCall,
-} from "@/lib/mistral";
+  generateContent,
+  GeminiError,
+  type FunctionCall,
+  type GeminiContent,
+} from "@/lib/gemini";
 import type { QuoteAction } from "@/lib/quote-store";
 
 export const runtime = "nodejs";
+export const maxDuration = 30;
 
 const COMPO_KEYS = COMPOSITION_TYPES.map((t) => t.key);
 const SIZE_KEYS = SIZES.map((s) => s.key);
 
 const TOOLS = [
   {
-    type: "function",
-    function: {
-      name: "add_composition",
-      description:
-        "Ajoute une composition au devis du visiteur. Utilise-le dès que le visiteur veut chiffrer ou ajouter un élément.",
-      parameters: {
-        type: "object",
-        properties: {
-          composition: { type: "string", enum: COMPO_KEYS },
-          format: {
-            type: "string",
-            enum: SIZE_KEYS,
-            description: "s = Discrète, m = Généreuse, l = Cérémonielle",
-          },
-          quantity: { type: "integer", minimum: 1, maximum: 20 },
+    name: "add_composition",
+    description:
+      "Ajoute une composition au devis du visiteur. Utilise-le dès que le visiteur veut chiffrer ou ajouter un élément.",
+    parameters: {
+      type: "object",
+      properties: {
+        composition: { type: "string", enum: COMPO_KEYS },
+        format: {
+          type: "string",
+          enum: SIZE_KEYS,
+          description: "s = Discrète, m = Généreuse, l = Cérémonielle",
         },
-        required: ["composition", "format", "quantity"],
+        quantity: { type: "integer", minimum: 1, maximum: 20 },
       },
+      required: ["composition", "format", "quantity"],
     },
   },
   {
-    type: "function",
-    function: {
-      name: "remove_composition",
-      description: "Retire du devis toutes les lignes d'une composition donnée.",
-      parameters: {
-        type: "object",
-        properties: { composition: { type: "string", enum: COMPO_KEYS } },
-        required: ["composition"],
-      },
+    name: "remove_composition",
+    description: "Retire du devis toutes les lignes d'une composition donnée.",
+    parameters: {
+      type: "object",
+      properties: { composition: { type: "string", enum: COMPO_KEYS } },
+      required: ["composition"],
     },
   },
   {
-    type: "function",
-    function: {
-      name: "reset_quote",
-      description: "Vide entièrement le devis.",
-      parameters: { type: "object", properties: {} },
-    },
+    name: "reset_quote",
+    description: "Vide entièrement le devis.",
+    parameters: { type: "object", properties: {} },
   },
 ];
 
@@ -83,17 +75,9 @@ ${quoteSummary || "Le devis est vide."}`;
 
 type IncomingMessage = { role: "user" | "assistant"; content: string };
 
-function parseArgs(call: ToolCall): Record<string, unknown> {
-  try {
-    return JSON.parse(call.function.arguments || "{}");
-  } catch {
-    return {};
-  }
-}
-
-function toAction(call: ToolCall): QuoteAction | null {
-  const args = parseArgs(call);
-  switch (call.function.name) {
+function toAction(call: FunctionCall): QuoteAction | null {
+  const args = call.args ?? {};
+  switch (call.name) {
     case "add_composition": {
       const composition = String(args.composition ?? "");
       const format = String(args.format ?? "");
@@ -128,7 +112,7 @@ export async function POST(req: Request) {
   }
 
   const incoming = Array.isArray(body.messages) ? body.messages : [];
-  const history: ChatMessage[] = incoming
+  const history = incoming
     .filter(
       (m) =>
         m &&
@@ -145,54 +129,54 @@ export async function POST(req: Request) {
 
   const quoteSummary = (body.quoteSummary ?? "").toString().slice(0, 2000);
 
-  const messages: ChatMessage[] = [
-    { role: "system", content: systemPrompt(quoteSummary) },
-    ...history,
-  ];
+  const contents: GeminiContent[] = history.map((m) => ({
+    role: m.role === "assistant" ? "model" : "user",
+    parts: [{ text: m.content }],
+  }));
 
   try {
-    const first = await chatCompletion({ messages, tools: TOOLS, toolChoice: "auto" });
+    const first = await generateContent({
+      systemInstruction: systemPrompt(quoteSummary),
+      contents,
+      tools: TOOLS,
+    });
 
-    const toolCalls = first.message.tool_calls ?? [];
-    if (toolCalls.length === 0) {
+    if (first.functionCalls.length === 0) {
       return NextResponse.json({
-        reply: first.message.content?.trim() || "…",
+        reply: first.text.trim() || "…",
         actions: [],
       });
     }
 
-    const actions = toolCalls
+    const actions = first.functionCalls
       .map(toAction)
       .filter((a): a is QuoteAction => a !== null);
 
-    const followUp: ChatMessage[] = [
-      ...messages,
+    const followUpContents: GeminiContent[] = [
+      ...contents,
+      first.content,
       {
-        role: "assistant",
-        content: first.message.content ?? "",
-        tool_calls: toolCalls,
+        role: "user",
+        parts: first.functionCalls.map((fc) => ({
+          functionResponse: { name: fc.name, response: { ok: true } },
+        })),
       },
-      ...toolCalls.map((call) => ({
-        role: "tool" as const,
-        name: call.function.name,
-        tool_call_id: call.id,
-        content: JSON.stringify({ ok: true }),
-      })),
     ];
 
-    const second = await chatCompletion({
-      messages: followUp,
+    const second = await generateContent({
+      systemInstruction: systemPrompt(quoteSummary),
+      contents: followUpContents,
       temperature: 0.4,
     });
 
     return NextResponse.json({
-      reply: second.message.content?.trim() || "C'est noté, votre devis est à jour.",
+      reply: second.text.trim() || "C'est noté, votre devis est à jour.",
       actions,
     });
   } catch (err) {
-    const status = err instanceof MistralError ? err.status : 500;
+    const status = err instanceof GeminiError ? err.status : 500;
     const message =
-      err instanceof MistralError
+      err instanceof GeminiError
         ? err.message
         : "Le conseiller est momentanément indisponible.";
     return NextResponse.json({ error: message }, { status });

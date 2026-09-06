@@ -1,7 +1,10 @@
 /**
- * Thin server-side wrapper around the Mistral API. Imported only from route
- * handlers under src/app/api — the API key never leaves the server. Both the
- * chatbot and the bouquet preview go through those handlers.
+ * Thin server-side wrapper around the Mistral API. Used only for the bouquet
+ * preview's image generation — the chatbot runs on Gemini (see gemini.ts)
+ * because this Mistral account has no chat/completions quota, but it does
+ * have a working image-generation quota via the conversations/agents API.
+ * Imported only from route handlers under src/app/api — the API key never
+ * leaves the server.
  */
 
 const BASE = "https://api.mistral.ai/v1";
@@ -26,77 +29,51 @@ function apiKey(): string {
   return key;
 }
 
-async function call(path: string, body: unknown): Promise<unknown> {
-  let res: Response;
-  try {
-    res = await fetch(`${BASE}${path}`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey()}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-  } catch {
-    throw new MistralError("Le service Mistral est injoignable pour le moment.");
-  }
+const MAX_RATE_LIMIT_RETRIES = 3;
 
-  if (!res.ok) {
-    const detail = await res.text().catch(() => "");
-    if (res.status === 429) {
-      throw new MistralError(
-        "La limite d’utilisation de l’API Mistral est atteinte. Attendez quelques instants ou vérifiez le quota et la facturation de votre clé API.",
-        429
-      );
-    }
-    throw new MistralError(
-      `Mistral a répondu ${res.status}. ${detail.slice(0, 300)}`.trim(),
-      502
-    );
-  }
-  return res.json();
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export type ChatMessage = {
-  role: "system" | "user" | "assistant" | "tool";
-  content: string;
-  tool_calls?: ToolCall[];
-  tool_call_id?: string;
-  name?: string;
-};
+async function call(path: string, body: unknown): Promise<unknown> {
+  for (let attempt = 0; ; attempt++) {
+    let res: Response;
+    try {
+      res = await fetch(`${BASE}${path}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey()}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+    } catch {
+      throw new MistralError("Le service Mistral est injoignable pour le moment.");
+    }
 
-export type ToolCall = {
-  id: string;
-  type: "function";
-  function: { name: string; arguments: string };
-};
-
-export type ChatChoice = {
-  message: {
-    role: "assistant";
-    content: string | null;
-    tool_calls?: ToolCall[];
-  };
-  finish_reason: string;
-};
-
-export async function chatCompletion(params: {
-  messages: ChatMessage[];
-  tools?: unknown[];
-  toolChoice?: "auto" | "none" | "any";
-  temperature?: number;
-  model?: string;
-}): Promise<ChatChoice> {
-  const data = (await call("/chat/completions", {
-    model: params.model ?? "mistral-small-latest",
-    temperature: params.temperature ?? 0.4,
-    messages: params.messages,
-    ...(params.tools ? { tools: params.tools, tool_choice: params.toolChoice ?? "auto" } : {}),
-  })) as { choices?: ChatChoice[] };
-
-  const choice = data.choices?.[0];
-  if (!choice) throw new MistralError("Réponse Mistral vide.");
-  return choice;
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      if (res.status === 429) {
+        if (attempt < MAX_RATE_LIMIT_RETRIES) {
+          const retryAfter = Number(res.headers.get("retry-after"));
+          const delay = Number.isFinite(retryAfter) && retryAfter > 0
+            ? retryAfter * 1000
+            : 500 * 2 ** attempt;
+          await sleep(delay);
+          continue;
+        }
+        throw new MistralError(
+          `Mistral a limité la requête (429). ${detail.slice(0, 300)}`.trim(),
+          429
+        );
+      }
+      throw new MistralError(
+        `Mistral a répondu ${res.status}. ${detail.slice(0, 300)}`.trim(),
+        502
+      );
+    }
+    return res.json();
+  }
 }
 
 type ConversationOutput = {
