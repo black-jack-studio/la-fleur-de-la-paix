@@ -25,6 +25,7 @@ export function QuoteExperience() {
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [reference, setReference] = useState("");
+  const [downloading, setDownloading] = useState(false);
 
   const canAdd = selectedTypes.length > 0 && size !== null;
   const previewTotal = size
@@ -72,6 +73,20 @@ export function QuoteExperience() {
 
   function handleOpenContact() {
     setMessage(summaryText());
+  }
+
+  async function handleDownload() {
+    if (entries.length === 0 || downloading) return;
+    setDownloading(true);
+    try {
+      const { downloadQuotePdf } = await import("@/lib/generateQuotePdf");
+      await downloadQuotePdf(entries, total, {
+        reference: reference || undefined,
+        clientName: name.trim() || undefined,
+      });
+    } finally {
+      setDownloading(false);
+    }
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -274,14 +289,25 @@ export function QuoteExperience() {
               </div>
 
               {entries.length > 0 && (
-                <Button
-                  href="#contact"
-                  onClick={handleOpenContact}
-                  variant="outline"
-                  className="mt-6 w-full"
-                >
-                  Envoyer ce devis à l&apos;atelier
-                </Button>
+                <div className="mt-6 flex flex-col gap-3">
+                  <Button
+                    href="#contact"
+                    onClick={handleOpenContact}
+                    className="w-full"
+                  >
+                    Envoyer ce devis à l&apos;atelier
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleDownload}
+                    disabled={downloading}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <DownloadIcon />
+                    {downloading ? "Préparation du PDF…" : "Télécharger le devis (PDF)"}
+                  </Button>
+                </div>
               )}
             </div>
           </div>
@@ -429,6 +455,20 @@ function Field({
       </span>
       {children}
     </label>
+  );
+}
+
+function DownloadIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" aria-hidden="true">
+      <path
+        d="M12 4v11m0 0 4-4m-4 4-4-4M5 19h14"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 
